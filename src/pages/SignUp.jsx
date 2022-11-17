@@ -1,8 +1,16 @@
 import { useState } from "react";
 import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
 import { Link } from "react-router-dom";
-
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
 import { FcGoogle } from "react-icons/fc";
+import { fdb } from "../firebase";
+import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const SignUp = () => {
   const [loginData, setLoginData] = useState({
@@ -14,15 +22,39 @@ const SignUp = () => {
   const [show, setshow] = useState(false);
 
   const { name, email, password } = loginData;
+  const navigate = useNavigate();
 
   const emailFunc = (e) => {
     setLoginData((prev) => ({ ...prev, [e.target.id]: e.target.value }));
-    console.log(loginData);
   };
+
+  async function OnSub(e) {
+    e.preventDefault();
+    try {
+      const auth = getAuth();
+      const userInfo = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      updateProfile(auth.currentUser, {
+        displayName: name,
+      });
+      const user = userInfo.user;
+      const dataCopy = { ...loginData };
+      delete dataCopy.password;
+      dataCopy.timeStamp = serverTimestamp();
+      await setDoc(doc(fdb, "users", user.uid), dataCopy);
+      toast.success("Sign-Up Successful");
+      navigate("/");
+    } catch (error) {
+      toast.error("Something went wrong with the Registration process");
+    }
+  }
 
   return (
     <div className="w-[100%] h-[100%] flex justify-center items-center bg-center bg-no-repeat bg-cover bg-[url('https://images.pexels.com/photos/966397/pexels-photo-966397.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')]">
-      <form className="w-[35%] ">
+      <form className="w-[35%]" onSubmit={OnSub}>
         <div className="mb-6">
           <label
             htmlFor="email"
