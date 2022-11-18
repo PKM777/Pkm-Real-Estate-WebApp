@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
-
+import { useNavigate } from "react-router-dom";
 import GooAuth from "../components/GooAuth";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { toast } from "react-toastify";
 
 const SignIn = () => {
   const [loginData, setLoginData] = useState({
@@ -13,15 +15,27 @@ const SignIn = () => {
   const [show, setshow] = useState(false);
 
   const { email, password } = loginData;
+  const navigate = useNavigate();
 
   const emailFunc = (e) => {
     setLoginData((prev) => ({ ...prev, [e.target.id]: e.target.value }));
-    console.log(loginData);
   };
+  async function onSub(e) {
+    e.preventDefault();
+    try {
+      const auth = getAuth();
+      const userinfo = await signInWithEmailAndPassword(auth, email, password);
+      if (userinfo) {
+        navigate("/profile");
+      }
+    } catch (error) {
+      toast.error("Wrong email or password");
+    }
+  }
 
   return (
     <div className="w-[100%] h-[100%] flex justify-center items-center bg-center bg-no-repeat bg-cover bg-[url('https://images.pexels.com/photos/966397/pexels-photo-966397.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')]">
-      <form className="w-[35%] ">
+      <form className="w-[35%] " onSubmit={onSub}>
         <div className="mb-6">
           <label
             htmlFor="email"
