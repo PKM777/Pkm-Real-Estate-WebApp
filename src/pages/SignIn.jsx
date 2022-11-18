@@ -25,9 +25,10 @@ const SignIn = () => {
     try {
       const auth = getAuth();
       const userinfo = await signInWithEmailAndPassword(auth, email, password);
-      if (userinfo) {
+      if (userinfo.user) {
         navigate("/profile");
       }
+      toast.success(`welcome ${userinfo.user}`);
     } catch (error) {
       toast.error("Wrong email or password");
     }
