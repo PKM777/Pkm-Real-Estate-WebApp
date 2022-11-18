@@ -1,6 +1,8 @@
+import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import { useState } from "react";
 
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 import GooAuth from "../components/GooAuth";
 
@@ -16,9 +18,21 @@ const ForgotPassword = () => {
     console.log(loginData);
   };
 
+  async function onSub(e) {
+    e.preventDefault();
+    try {
+      const auth = getAuth();
+      await sendPasswordResetEmail(auth, email);
+
+      toast.success(`an email has been sent to ${email}`);
+    } catch (error) {
+      toast.error("couldn't send password reset email");
+    }
+  }
+
   return (
     <div className="w-[100%] h-[100%] flex justify-center items-center bg-center bg-no-repeat bg-cover bg-[url('https://images.pexels.com/photos/966397/pexels-photo-966397.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')]">
-      <form className="w-[35%] ">
+      <form className="w-[35%] " onSubmit={onSub}>
         <div className="mb-6">
           <label
             htmlFor="email"
