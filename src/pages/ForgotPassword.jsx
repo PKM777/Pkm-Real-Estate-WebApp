@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { Link } from "react-router-dom";
 
-import { FcGoogle } from "react-icons/fc";
+import GooAuth from "../components/GooAuth";
 
 const ForgotPassword = () => {
   const [loginData, setLoginData] = useState({
@@ -64,13 +64,7 @@ const ForgotPassword = () => {
         <div className="flex items-center  my-4 before:border-t before:flex-1 before:border-gray-300 after:border-t after:flex-1 after:border-gray-300">
           <p className="text-center text-white font-semibold mx-4">OR</p>
         </div>
-        <button
-          type="button"
-          className="flex items-center justify-center w-full bg-red-700 text-white px-7 py-3 uppercase text-sm font-medium hover:bg-red-800 active:bg-red-900 shadow-md hover:shadow-lg active:shadow-lg transition duration-150 ease-in-out rounded"
-        >
-          <FcGoogle className="text-2xl  bg-white rounded-full mr-2" />
-          Continue with Google
-        </button>
+        <GooAuth />
       </form>
     </div>
   );
