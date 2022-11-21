@@ -4,6 +4,7 @@ import { getAuth, updateProfile } from "firebase/auth";
 import { FcHome } from "react-icons/fc";
 import { useEffect } from "react";
 import { fdb } from "../firebase";
+import { toast } from "react-toastify";
 
 const Profile = () => {
   const auth = getAuth();
@@ -25,13 +26,14 @@ const Profile = () => {
   function onLogout() {
     auth.signOut();
     navigate("/");
+    toast.success("Logged out successfully");
   }
 
   function onSubmit() {}
 
   return (
-    <div className="w-[100%] h-[100%] pb-[10%] flex justify-center items-center flex-col bg-center bg-no-repeat bg-cover bg-[url('https://images.pexels.com/photos/966397/pexels-photo-966397.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')]">
-      <h1 className="text-3xl text-center m-8 font-bold">My Profile</h1>
+    <div className="w-[100%] h-[100%] pb-[10%] flex justify-center items-center flex-col bg-center bg-no-repeat bg-cover bg-[url('https://images.pexels.com/photos/1454804/pexels-photo-1454804.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')]">
+      <h1 className="text-3xl text-center m-8 font-bold">{`Hi, ${name}`}</h1>
       <form className="w-[35%]">
         <div className="mb-6 mt-6">
           <input
