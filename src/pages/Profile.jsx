@@ -2,9 +2,10 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { getAuth, updateProfile } from "firebase/auth";
 import { FcHome } from "react-icons/fc";
-import { useEffect } from "react";
+
 import { fdb } from "../firebase";
 import { toast } from "react-toastify";
+import { doc, updateDoc } from "firebase/firestore";
 
 const Profile = () => {
   const auth = getAuth();
@@ -29,7 +30,22 @@ const Profile = () => {
     toast.success("Logged out successfully");
   }
 
-  function onSubmit() {}
+  async function onSubmit() {
+    try {
+      if (auth.currentUser.displayName !== name) {
+        await updateProfile(auth.currentUser, {
+          displayName: name,
+        });
+      }
+      const userRef = doc(fdb, "users", auth.currentUser.uid);
+      await updateDoc(userRef, {
+        name,
+      });
+      toast.success("Profile name Updated successfully");
+    } catch (error) {
+      toast.error("could not update profile name");
+    }
+  }
 
   return (
     <div className="w-[100%] h-[100%] pb-[10%] flex justify-center items-center flex-col bg-center bg-no-repeat bg-cover bg-[url('https://images.pexels.com/photos/1454804/pexels-photo-1454804.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')]">
@@ -43,7 +59,7 @@ const Profile = () => {
             disabled={!detail}
             onChange={onChange}
             className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[100%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 ${
-              detail && "bg-red-200 focus:bg-red-200"
+              detail && "text-yellow-400 focus:bg-blue-600"
             }`}
           />
         </div>

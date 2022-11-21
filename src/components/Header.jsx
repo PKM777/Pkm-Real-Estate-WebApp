@@ -1,14 +1,28 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import logo from "../assets/favicon.png";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useState, useEffect } from "react";
 
 const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [page, setpage] = useState("Sign-In");
   const routePath = (path) => {
     if (path === location.pathname) {
       return true;
     }
   };
+  const auth = getAuth();
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setpage(`${auth.currentUser.displayName}`);
+      } else {
+        setpage("Sign-In");
+      }
+    });
+  }, [auth]);
+
   return (
     <div className="bg-white border-b shadow-sm sticky top-0 z-40">
       <header className="flex justify-between items-center h-[50px] px-3 max-w-6xl mx-auto">
@@ -46,11 +60,12 @@ const Header = () => {
             </li>
             <li
               className={`bg-white cursor-pointer border-b-[3px] pb-1 ${
-                routePath("/sign-in") && "font-bold border-b-yellow-500"
+                (routePath("/sign-in") || routePath("/profile")) &&
+                "font-bold border-b-yellow-500"
               }`}
-              onClick={() => navigate("/sign-in")}
+              onClick={() => navigate("/profile")}
             >
-              Sign-In
+              {page}
             </li>
           </ul>
         </div>

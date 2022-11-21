@@ -28,7 +28,7 @@ const SignIn = () => {
       if (userinfo.user) {
         navigate("/profile");
       }
-      toast.success(`welcome ${userinfo.user}`);
+      toast.success(`welcome ${userinfo.user.displayName}`);
     } catch (error) {
       toast.error("Wrong email or password");
     }
