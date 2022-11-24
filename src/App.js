@@ -10,6 +10,7 @@ import Footer from "./components/Footer";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Out from "./components/Out";
+import ListItem from "./pages/ListItem";
 
 function App() {
   return (
@@ -27,6 +28,9 @@ function App() {
 
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/offers" element={<Offers />} />
+          <Route path="/create" element={<Out />}>
+            <Route path="/create" element={<ListItem />} />
+          </Route>
         </Routes>
         <Footer />
       </Router>
