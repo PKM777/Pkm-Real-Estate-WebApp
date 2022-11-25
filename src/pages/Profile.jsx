@@ -1,11 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { getAuth, updateProfile } from "firebase/auth";
 import { FcHome } from "react-icons/fc";
+import EachItem from "../components/EachItem";
 
 import { fdb } from "../firebase";
 import { toast } from "react-toastify";
-import { doc, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDocs,
+  orderBy,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 
 const Profile = () => {
   const auth = getAuth();
@@ -15,7 +24,8 @@ const Profile = () => {
     name: auth.currentUser.displayName,
     email: auth.currentUser.email,
   });
-
+  const [lists, setLists] = useState(null);
+  const [load, setLoad] = useState(true);
   const { name, email } = data;
   function onChange(e) {
     setData((prevState) => ({
@@ -46,6 +56,30 @@ const Profile = () => {
       toast.error("could not update profile name");
     }
   }
+
+  useEffect(() => {
+    async function fetchAllLists() {
+      const listingRef = collection(fdb, "listings");
+      const ask = query(
+        listingRef,
+        where("userRef", "==", auth.currentUser.uid),
+        orderBy("timestamp", "desc")
+      );
+      const getAllLists = await getDocs(ask);
+      let items = [];
+      getAllLists.forEach((item) => {
+        return items.push({
+          id: item.id,
+          data: item.data(),
+        });
+      });
+
+      setLists(items);
+      setLoad(false);
+    }
+
+    fetchAllLists();
+  }, [auth.currentUser.uid]);
 
   return (
     <div className="w-[100%] h-[100%] pb-[10%] flex justify-center items-center flex-col bg-center bg-no-repeat bg-cover bg-[url('https://images.pexels.com/photos/1454804/pexels-photo-1454804.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')]">
@@ -103,6 +137,24 @@ const Profile = () => {
           Sell or rent your home
         </Link>
       </button>
+      <div className="max-w-6xl px-3 mt-6 mx-auto">
+        {!load && lists.length > 0 && (
+          <>
+            <h2 className="text-2xl text-center font-semibold mb-6">
+              My Listings
+            </h2>
+            <ul className="sm:grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+              {lists.map((listing) => (
+                <EachItem
+                  key={listing.id}
+                  id={listing.id}
+                  listing={listing.data}
+                />
+              ))}
+            </ul>
+          </>
+        )}
+      </div>
     </div>
   );
 };
