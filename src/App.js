@@ -11,6 +11,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Out from "./components/Out";
 import ListItem from "./pages/ListItem";
+import EditList from "./pages/EditList";
 
 function App() {
   return (
@@ -30,6 +31,9 @@ function App() {
           <Route path="/offers" element={<Offers />} />
           <Route path="/create" element={<Out />}>
             <Route path="/create" element={<ListItem />} />
+          </Route>
+          <Route path="/edit" element={<Out />}>
+            <Route path="/edit/:listingId" element={<EditList />} />
           </Route>
         </Routes>
         <Footer />

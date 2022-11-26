@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import {
   collection,
   doc,
+  deleteDoc,
   getDocs,
   orderBy,
   query,
@@ -81,8 +82,22 @@ const Profile = () => {
     fetchAllLists();
   }, [auth.currentUser.uid]);
 
+  async function onDelete(listingID) {
+    if (window.confirm("Are you sure you want to delete?")) {
+      await deleteDoc(doc(fdb, "listings", listingID));
+      const updatedListings = lists.filter(
+        (listing) => listing.id !== listingID
+      );
+      setLists(updatedListings);
+      toast.success("Successfully deleted the listing");
+    }
+  }
+  function onEdit(listingID) {
+    navigate(`/edit/${listingID}`);
+  }
+
   return (
-    <div className="w-[100%] h-[100%] pb-[10%] flex justify-center items-center flex-col bg-center bg-no-repeat bg-cover bg-[url('https://images.pexels.com/photos/1454804/pexels-photo-1454804.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')]">
+    <div className="w-[100%] bg-white pb-[10%] flex justify-center items-center flex-col ">
       <h1 className="text-3xl text-center m-8 font-bold">{`Hi, ${name}`}</h1>
       <form className="w-[35%]">
         <div className="mb-6 mt-6">
@@ -149,6 +164,8 @@ const Profile = () => {
                   key={listing.id}
                   id={listing.id}
                   listing={listing.data}
+                  onDelete={() => onDelete(listing.id)}
+                  onEdit={() => onEdit(listing.id)}
                 />
               ))}
             </ul>
