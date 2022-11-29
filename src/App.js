@@ -13,7 +13,7 @@ import Out from "./components/Out";
 import ListItem from "./pages/ListItem";
 import EditList from "./pages/EditList";
 import SingleItem from "./pages/SingleItem";
-
+import Category from "./pages/Category";
 function App() {
   return (
     <>
@@ -30,6 +30,7 @@ function App() {
 
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/offers" element={<Offers />} />
+          <Route path="/category/:categoryName" element={<Category />} />
           <Route
             path="/category/:categoryName/:listingId"
             element={<SingleItem />}

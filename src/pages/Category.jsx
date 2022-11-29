@@ -12,18 +12,20 @@ import {
 import { fdb } from "../firebase";
 import Loader from "../components/Loader";
 import EachItem from "../components/EachItem";
+import { useParams } from "react-router-dom";
 
-export default function Offers() {
+export default function Category() {
   const [listings, setListings] = useState(null);
   const [loading, setLoading] = useState(true);
   const [lastFetchedListing, setLastFetchListing] = useState(null);
+  const params = useParams();
   useEffect(() => {
     async function fetchListings() {
       try {
         const listingRef = collection(fdb, "listings");
         const q = query(
           listingRef,
-          where("offer", "==", true),
+          where("type", "==", params.categoryName),
           orderBy("timestamp", "desc"),
           limit(8)
         );
@@ -45,14 +47,14 @@ export default function Offers() {
     }
 
     fetchListings();
-  }, []);
+  }, [params.categoryName]);
 
   async function onFetchMoreListings() {
     try {
       const listingRef = collection(fdb, "listings");
       const q = query(
         listingRef,
-        where("offer", "==", true),
+        where("type", "==", params.categoryName),
         orderBy("timestamp", "desc"),
         startAfter(lastFetchedListing),
         limit(4)
@@ -76,7 +78,9 @@ export default function Offers() {
 
   return (
     <div className="max-w-6xl mx-auto px-3">
-      <h1 className="text-3xl text-center mt-6 font-bold mb-6">Offers</h1>
+      <h1 className="text-3xl text-center mt-6 font-bold mb-6">
+        {params.categoryName === "rent" ? "Places for rent" : "Places for sale"}
+      </h1>
       {loading ? (
         <Loader />
       ) : listings && listings.length > 0 ? (
@@ -104,7 +108,12 @@ export default function Offers() {
           )}
         </>
       ) : (
-        <p>There are no current offers</p>
+        <p>
+          There are no current{" "}
+          {params.categoryName === "rent"
+            ? "places for rent"
+            : "places for sale"}
+        </p>
       )}
     </div>
   );
